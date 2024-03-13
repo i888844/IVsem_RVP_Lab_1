@@ -85,7 +85,7 @@ function calculateAge(birthDate) {
 let birthdayInput = String(prompt(`Введите Вашу дату рождения в формате (ГГГГ-ММ-ДД):`))
 let birthday = new Date(birthdayInput)
 
-if (isNaN(birthday.getTime()) || calculateAge(birthday) < 16) {
+if (isNaN(birthday.getTime()) || calculateAge(birthday) < 16 || calculateAge(birthday) > 120) {
     alert(`Некорректная дата рождения. Пожалуйста, перезагрузите страницу и введите корректные данные в формате ГГГГ-ММ-ДД.`)
 }
 
@@ -94,10 +94,16 @@ document.getElementById(`birthday`).innerHTML = formatDate(birthday)
 let birthdayName = String(getDayName(birthday.getDay()))
 document.getElementById(`birthdayName`).innerHTML = birthdayName
 
+const birthdaySec = new Date(new Date().getFullYear(), birthday.getMonth(), birthday.getMonth())
+const thisYearAugust = new Date(new Date().getFullYear(), 7, 1)
+
 let oYear = Number(parseInt(fullYear) + 4)
 document.getElementById(`oYear`).innerHTML = oYear
 
-let oAge = Number(Number(new Date().getFullYear() - birthday.getFullYear()) + 4)
+let oAge = oYear - birthday.getFullYear()
+if (birthday > new Date(birthday.getFullYear(), 7, 1)) {
+    oAge -= 1
+}
 document.getElementById(`oAge`).innerHTML = oAge
 
 let currentDate = new Date()
@@ -151,23 +157,21 @@ document.getElementById(`maxM`).innerHTML = maxM
 
 let result = 0
 let string = ''
+let arctgX = Math.atan(x)
+document.getElementById(`arctgX`).innerHTML = arctgX.toFixed(6)
+let delta = 0
+
 for (let m = minM; m <= maxM; m++) {
     result += Math.pow(-1, m - 1) * Math.pow(x, 2 * m - 1) / factorial(2 * m - 1)
-    string += `<p>M = ${m} | S = ${result}</p>`
+    delta = Math.abs(arctgX - result)
+    string += `<p>M = ${m} | S = ${result.toFixed(6)} | delta = ${delta.toFixed(6)}</p>`
     document.getElementById(`steps`).innerHTML = string
-    console.log(`m = ${m} result = ${result}`)
 }
-document.getElementById(`result`).innerHTML = result
 
-let arctgX = Math.atan(x)
-document.getElementById(`arctgX`).innerHTML = arctgX
+document.getElementById(`result`).innerHTML = result.toFixed(6)
 
-let delta = Math.abs(result - arctgX)
-
-if (result === arctgX) {
-    document.getElementById(`answer`).innerHTML = `Да`
-} else if (Math.abs(result - arctgX) < Math.pow(10, -4)) {
-    document.getElementById(`answer`).innerHTML = `Почти, погрешность ${delta}`
+if (Math.abs(delta) <= Math.pow(10, -6)) {
+    document.getElementById(`answer`).innerHTML = `Да, погрешность ${delta.toFixed(6)}`
 } else {
-    document.getElementById(`answer`).innerHTML = `Нет, погрешность ${delta}`
+    document.getElementById(`answer`).innerHTML = `Нет, погрешность ${delta.toFixed(6)}`
 }
